@@ -1,6 +1,7 @@
 package com.example.glivepush.camera;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
@@ -16,7 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-public class GCameraRender implements GEGLSurfaceView.GGLRender , SurfaceTexture.OnFrameAvailableListener {
+public class GCameraRender implements GEGLSurfaceView.GGLRender, SurfaceTexture.OnFrameAvailableListener {
 
     private Context context;
 
@@ -73,7 +74,6 @@ public class GCameraRender implements GEGLSurfaceView.GGLRender , SurfaceTexture
         screenWidth = DisplayUtil.getScreenWidth(context);
         screenHeight = DisplayUtil.getScreenHeight(context);
 
-
         gCameraFboRender = new GCameraFboRender(context);
 
         vertexBuffer = ByteBuffer.allocateDirect(vertexData.length * 4)
@@ -105,16 +105,16 @@ public class GCameraRender implements GEGLSurfaceView.GGLRender , SurfaceTexture
         fPosition = GLES20.glGetAttribLocation(program, "f_Position");
 
         //加载矩阵
-        umatrix =  GLES20.glGetUniformLocation(program,"u_Matrix");
+        umatrix = GLES20.glGetUniformLocation(program, "u_Matrix");
 
-        int [] vbos = new int[1];
+        int[] vbos = new int[1];
         GLES20.glGenBuffers(1, vbos, 0);
         vboId = vbos[0];
         //绑定
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboId);
         //分配内存
-        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, vertexData.length*4 + fragmentData.length*4,
-                null,GLES20. GL_STATIC_DRAW);
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, vertexData.length * 4 + fragmentData.length * 4,
+                null, GLES20.GL_STATIC_DRAW);
         //缓存到显存
         GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, 0, vertexData.length * 4, vertexBuffer);
         GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, vertexData.length * 4, fragmentData.length * 4,
@@ -123,7 +123,7 @@ public class GCameraRender implements GEGLSurfaceView.GGLRender , SurfaceTexture
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
         //fbo
-        int [] fbos = new int[1];
+        int[] fbos = new int[1];
         GLES20.glGenBuffers(1, fbos, 0);
         fboId = fbos[0];
         //绑定
@@ -151,9 +151,9 @@ public class GCameraRender implements GEGLSurfaceView.GGLRender , SurfaceTexture
         GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
                 GLES20.GL_TEXTURE_2D, fboTextureid, 0);
         //检查FBO绑定是否成功
-        if(GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER) != GLES20.GL_FRAMEBUFFER_COMPLETE){
+        if (GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER) != GLES20.GL_FRAMEBUFFER_COMPLETE) {
             Log.e("godv", "fbo error");
-        }else {
+        } else {
             Log.e("godv", "fbo success");
         }
 
@@ -180,7 +180,7 @@ public class GCameraRender implements GEGLSurfaceView.GGLRender , SurfaceTexture
         //监听
         surfaceTexture.setOnFrameAvailableListener(this);
 
-        if(onSurfaceCreateListener != null){
+        if (onSurfaceCreateListener != null) {
             onSurfaceCreateListener.onSurfaceCreate(surfaceTexture, fboTextureid);
         }
 
@@ -188,16 +188,16 @@ public class GCameraRender implements GEGLSurfaceView.GGLRender , SurfaceTexture
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, 0);
     }
 
-        //重置矩阵
-        public void resetMatrix(){
-            Matrix.setIdentityM(matrix, 0);
-        }
+    //重置矩阵
+    public void resetMatrix() {
+        Matrix.setIdentityM(matrix, 0);
+    }
 
-        //设置角度
-        public void setAngle(float angle ,float x, float y,float z){
-            Matrix.rotateM(matrix, 0, angle, x, y, z);
+    //设置角度
+    public void setAngle(float angle, float x, float y, float z) {
+        Matrix.rotateM(matrix, 0, angle, x, y, z);
 
-        }
+    }
 
     @Override
     public void onSurfaceChanged(int width, int height) {
@@ -213,12 +213,12 @@ public class GCameraRender implements GEGLSurfaceView.GGLRender , SurfaceTexture
         surfaceTexture.updateTexImage();
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glClearColor(1f,0f, 0f, 1f);
+        GLES20.glClearColor(1f, 0f, 0f, 1f);
 
         GLES20.glUseProgram(program);
 
         //设置屏幕大小
-        GLES20.glViewport(0,0,screenWidth,screenHeight);
+        GLES20.glViewport(0, 0, screenWidth, screenHeight);
         //使用
         GLES20.glUniformMatrix4fv(umatrix, 1, false, matrix, 0);
 
@@ -249,7 +249,7 @@ public class GCameraRender implements GEGLSurfaceView.GGLRender , SurfaceTexture
 
     }
 
-    public interface OnSurfaceCreateListener{
+    public interface OnSurfaceCreateListener {
 
         void onSurfaceCreate(SurfaceTexture surfaceTexture, int textureId);
     }
