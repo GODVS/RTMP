@@ -18,4 +18,14 @@
         android:layout_height="wrap_content"
         android:text="图片生成视频"
         android:onClick="imgVideo"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="播放yuv数据"
+        android:onClick="yuvPlayer"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="录音"
+        android:onClick="audioRecord"/>
 </LinearLayout>

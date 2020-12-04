@@ -4,14 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.example.glivepush.imgvideo.GImgVideoView
-        android:id="@+id/imgVideoView"
-        android:layout_width="match_parent"
-        android:layout_height="500px" />
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="start"
-        android:text="开始合成" />
+        android:onClick="record"
+        android:text="开始录制" />
 </LinearLayout>

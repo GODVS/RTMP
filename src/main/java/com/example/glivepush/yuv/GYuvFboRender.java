@@ -1,4 +1,4 @@
-package com.example.glivepush.imgvideo;
+package com.example.glivepush.yuv;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-public class GImgVideoFboRender {
+public class GYuvFboRender {
 
     private Context context;
 
@@ -36,7 +36,7 @@ public class GImgVideoFboRender {
 
     private int vboId;
 
-    public GImgVideoFboRender(Context context) {
+    public GYuvFboRender(Context context) {
         this.context = context;
 
         vertexBuffer = ByteBuffer.allocateDirect(vertexData.length * 4)
@@ -85,6 +85,7 @@ public class GImgVideoFboRender {
 
         GLES20.glUseProgram(program);
 
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboId);

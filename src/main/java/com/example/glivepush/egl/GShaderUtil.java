@@ -17,6 +17,7 @@ import java.nio.ByteBuffer;
 
 public class GShaderUtil {
 
+    // 1 .从raw文件中获取字符串
     public static String getRawResource(Context context, int rawId) {
         InputStream inputStream = context.getResources().openRawResource(rawId);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -33,6 +34,7 @@ public class GShaderUtil {
         return sb.toString();
     }
 
+    //2 .根据顶点着色器字符串和片元着色器字符串创建 shader
     private static int loadShader(int shaderType, String source) {
         int shader = GLES20.glCreateShader(shaderType);
         if (shader != 0) {
@@ -42,7 +44,6 @@ public class GShaderUtil {
             int[] compile = new int[1];
             GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compile, 0);
             if (compile[0] != GLES20.GL_TRUE) {
-                Log.d("ywl5320", "shader compile error");
                 GLES20.glDeleteShader(shader);
                 shader = 0;
             }
@@ -52,6 +53,7 @@ public class GShaderUtil {
         }
     }
 
+    //3 .根据shader创建program
     public static int createProgram(String vertexSource, String fragmentSoruce) {
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource);
         int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentSoruce);
@@ -68,7 +70,6 @@ public class GShaderUtil {
         return 0;
     }
 
-    /*******************************************添加水印贴图-start***********************************/
     //文字生成图片的工具类
     public static Bitmap createTextImage(String text, int textSize, String textColor, String bgColor,
                                          int padding) {

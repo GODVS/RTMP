@@ -8,6 +8,7 @@ import android.util.Log;
 import com.example.glivepush.R;
 import com.example.glivepush.egl.GEGLSurfaceView;
 import com.example.glivepush.egl.GShaderUtil;
+import com.example.glivepush.util.DisplayUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -17,26 +18,24 @@ public class GImgVideoRender implements GEGLSurfaceView.GGLRender {
 
     private Context context;
 
+    //顶点坐标  主要用来在本地开辟内存
     private float[] vertexData = {
             -1f, -1f,
             1f, -1f,
             -1f, 1f,
-            1f, 1f,
-
-            0f, 0f,
-            0f, 0f,
-            0f, 0f,
-            0f, 0f
+            1f, 1f
     };
-
+    //生成的本地内存
     private FloatBuffer vertexBuffer;
 
+    //纹理坐标
     private float[] fragmentData = {
-            0f, 1f,
-            1f, 1f,
             0f, 0f,
-            1f, 0f
+            1f, 0f,
+            0f, 1f,
+            1f, 1f
     };
+    //生成的本地内存
     private FloatBuffer fragmentBuffer;
 
     private int program;
@@ -63,12 +62,12 @@ public class GImgVideoRender implements GEGLSurfaceView.GGLRender {
         //初始化顶点坐标
         gImgVideoFboRender = new GImgVideoFboRender(context);
 
+        //生成的本地内存
         vertexBuffer = ByteBuffer.allocateDirect(vertexData.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer()
                 .put(vertexData);
         vertexBuffer.position(0);
-
         fragmentBuffer = ByteBuffer.allocateDirect(fragmentData.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer()
@@ -90,17 +89,17 @@ public class GImgVideoRender implements GEGLSurfaceView.GGLRender {
     public void onSurfaceCreated() {
         gImgVideoFboRender.onCreate();
 
-        //更换shader
+        //工具方法加载代码
         String vertexSource = GShaderUtil.getRawResource(context, R.raw.vertex_shader_screen);
-
         String fragmentSource = GShaderUtil.getRawResource(context, R.raw.fragment_shader_screen);
 
+        //工具方法创建program
         program = GShaderUtil.createProgram(vertexSource, fragmentSource);
 
         if (program > 0) {
-            //顶点坐标
+            //取出顶点坐标
             vPosition = GLES20.glGetAttribLocation(program, "v_Position");
-            //纹理坐标
+            //取出纹理坐标
             fPosition = GLES20.glGetAttribLocation(program, "f_Position");
         }
     }
@@ -134,18 +133,21 @@ public class GImgVideoRender implements GEGLSurfaceView.GGLRender {
         int[] textureIds = new int[1];
         GLES20.glGenTextures(1, textureIds, 0);
         textureid = textureIds[0];
-
+        //绑定
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureid);
 
         //设置环绕过滤方法
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_REPEAT);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_REPEAT);
-
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
 
+        int screenHeight = DisplayUtil.getScreenHeight(context);
+        Log.d("godv", "screenHeight : " +screenHeight);
+        int screenWidth = DisplayUtil.getScreenWidth(context);
+        Log.d("godv", "screenWidth : " +screenWidth);
         //设置FBO分配内存大小
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, 900, 1600, 0,
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, screenWidth, 500, 0,
                 GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
         //把纹理绑定到FBO
         GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
@@ -170,6 +172,7 @@ public class GImgVideoRender implements GEGLSurfaceView.GGLRender {
             onRenderCreateListener.onCreate(textureid);
         }
 
+        //屏幕大小
         GLES20.glViewport(0, 0, width, height);
         gImgVideoFboRender.onChange(width, height);
     }
@@ -178,27 +181,28 @@ public class GImgVideoRender implements GEGLSurfaceView.GGLRender {
     public void onDrawFrame() {
         imgTextureId = GShaderUtil.loadTexture(srcImg, context);
 
-        Log.d("godv", "id is : " + imgTextureId);
-
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fboId);
+
+        //清屏
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glClearColor(1f, 0f, 0f, 1f);
-
+        //使程序生效
         GLES20.glUseProgram(program);
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, imgTextureId);
-
-
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboId);
 
+        //使顶点属性数组有效
         GLES20.glEnableVertexAttribArray(vPosition);
+        //为顶点属性赋值
         GLES20.glVertexAttribPointer(vPosition, 2, GLES20.GL_FLOAT, false, 8,
                 0);
-
+        //使纹理属性数组有效
         GLES20.glEnableVertexAttribArray(fPosition);
+        //为顶点属性赋值
         GLES20.glVertexAttribPointer(fPosition, 2, GLES20.GL_FLOAT, false, 8,
                 vertexData.length * 4);
-
+        //绘制图形
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
