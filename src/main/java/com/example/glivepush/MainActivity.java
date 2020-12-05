@@ -17,12 +17,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
-
     public void cameraPreview(View view) {
         Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
@@ -46,6 +40,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void audioRecord(View view) {
         Intent intent = new Intent(this, AudioRecordActivity.class);
+        startActivity(intent);
+    }
+
+    public void SLESRecord(View view) {
+        Intent intent = new Intent(this, OpenSLESActivity.class);
+        startActivity(intent);
+    }
+
+    public void livePush(View view) {
+        Intent intent = new Intent(this, LivePushActivity.class);
         startActivity(intent);
     }
 }

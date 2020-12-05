@@ -26,6 +26,16 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="录音"
+        android:text="AudioRecord录音"
         android:onClick="audioRecord"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="OpenSLES录音"
+        android:onClick="SLESRecord"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="直播推流"
+        android:onClick="livePush"/>
 </LinearLayout>

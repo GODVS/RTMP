@@ -39,6 +39,10 @@
             android:name=".YuvActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".AudioRecordActivity" />
+        <activity android:name=".OpenSLESActivity" />
+        <activity
+            android:name=".LivePushActivity"
+            android:theme="@style/AppThemeFullScreen" />
     </application>
 
 </manifest>
