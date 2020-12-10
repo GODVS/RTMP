@@ -21,6 +21,10 @@ public:
 
     GCallJava *gCallJava = NULL;
 
+    bool startPushing = false;
+
+    long startTime = 0;
+
 public:
 
     RtmpPush(const char *url, GCallJava *gCallJava);
@@ -29,6 +33,18 @@ public:
 
     void init();
 
+
+    //发送sps pps
+    void pushSPSPPS(char *sps, int sps_len, char *pps, int pps_len);
+
+    //发送帧数据
+    void pushVideoData(char *data, int data_len, bool keyFrame);
+
+    /*************************************直播推流-video-start***********************************/
+    void pushAudioData(char *data, int data_len);
+
+    void pushStop();
+    /*************************************直播推流-video-end***********************************/
 };
 
 #endif //RTMPSUC_RTMPPUSH_H

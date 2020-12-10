@@ -52,7 +52,6 @@ public class YuvActivity extends AppCompatActivity {
                             Log.d("godv", "完成");
                         }
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

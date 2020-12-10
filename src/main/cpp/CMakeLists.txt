@@ -13,7 +13,6 @@ add_library(
         librtmp/parseurl.c
         librtmp/rtmp.c
         GCallJava.cpp
-        native-lib.cpp
         RecordBuffer.cpp
 )
 
